@@ -1,0 +1,264 @@
+// Chopute production schema
+// PostgreSQL + Prisma. See docs/DATABASE.md for rationale.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Auth.js (NextAuth) models
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  firebaseUid   String?   @unique
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+
+  // Email/password auth. Null for users who only ever used Google OAuth.
+  passwordHash String?
+
+  // Referral program
+  referralCode String  @unique
+  referredById String?
+  referredBy   User?   @relation("Referrals", fields: [referredById], references: [id], onDelete: SetNull)
+  referrals    User[]  @relation("Referrals")
+
+  // Free-search entitlement. Base allotment is 2; referral rewards increase
+  // freeSearchesGranted. Enforcement always compares usage against grant.
+  freeSearchesUsed    Int             @default(0)
+  freeSearchesGranted Int             @default(2)
+  plan                EntitlementPlan @default(FREE)
+
+  accounts             Account[]
+  sessions             Session[]
+  searches             Search[]
+  leads                Lead[]
+  payments             Payment[]
+  referralRewardsGiven ReferralReward[] @relation("RewardGiver")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([referredById])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------------------------------------------------------------------------
+// Search / Lead generation domain
+// ---------------------------------------------------------------------------
+
+enum SearchStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  INTERESTED
+  CLOSED
+}
+
+model Search {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  businessType String
+  location     String
+
+  status       SearchStatus @default(PENDING)
+  resultCount  Int          @default(0)
+  errorMessage String?
+
+  // Apify run tracking for async processing / polling.
+  apifyRunId     String?
+  apifyDatasetId String?
+
+  // Prevents double-consumption of a free search on retried/duplicate
+  // submissions from the client.
+  idempotencyKey String @unique
+
+  // Did this search consume one unit of the user's free-search quota?
+  consumedFreeSearch Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  leads Lead[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([status])
+}
+
+// Shared, deduplicated business records. The same business can legitimately
+// surface across many different users'/searches' results; we only ever
+// store it once and reference it from Lead.
+model Business {
+  id String @id @default(cuid())
+
+  // Stable external identifier (Google Maps Place ID) — highest-priority
+  // dedup key when available.
+  placeId String? @unique
+
+  name        String
+  address     String?
+  phone       String?
+  website     String?
+  category    String?
+  rating      Float?
+  reviewCount Int?
+  sourceUrl   String?
+
+  // Fallback dedup key (normalized name + address) used when no placeId
+  // is available from the data provider.
+  normalizedKey String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  leads Lead[]
+
+  @@index([normalizedKey])
+}
+
+// A Lead is the per-user, per-search relationship to a Business, carrying
+// the mutable pipeline status. Unique on (searchId, businessId) so a single
+// Apify run can never create duplicate rows for the same business.
+model Lead {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  searchId String
+  search   Search @relation(fields: [searchId], references: [id], onDelete: Cascade)
+
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  status LeadStatus @default(NEW)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([searchId, businessId])
+  @@index([userId])
+  @@index([searchId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Referral program
+// ---------------------------------------------------------------------------
+
+// One row per successfully-rewarded referral. The unique constraint on
+// referredUserId guarantees a referrer can never be rewarded twice for the
+// same signup, even under concurrent/duplicate requests.
+model ReferralReward {
+  id String @id @default(cuid())
+
+  referrerId String
+  referrer   User   @relation("RewardGiver", fields: [referrerId], references: [id], onDelete: Cascade)
+
+  referredUserId       String @unique
+  extraSearchesGranted Int    @default(1)
+
+  createdAt DateTime @default(now())
+
+  @@index([referrerId])
+}
+
+// ---------------------------------------------------------------------------
+// Payments (one-time unlimited-access purchase)
+// ---------------------------------------------------------------------------
+
+enum EntitlementPlan {
+  FREE
+  UNLIMITED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+model Payment {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  provider String @default("paystack")
+  reference String @unique
+
+  // Smallest currency unit (e.g. kobo for NGN) to avoid float rounding.
+  amount   Int
+  currency String @default("NGN")
+
+  status     PaymentStatus @default(PENDING)
+  verifiedAt DateTime?
+
+  // Raw provider verification payload, kept for auditing/support.
+  rawResponse Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}

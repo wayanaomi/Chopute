@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+/*
+ * Chopute design tokens.
+ * The product's visual language is intentionally minimal:
+ * off-white page background, white cards, subtle borders,
+ * rounded corners, dark navy/charcoal text, muted secondary
+ * text, and a single brand orange used for primary actions.
+ * All colors/spacing/radius live here so the rest of the app
+ * never hardcodes raw color values.
+ */
+:root {
+  /* Surfaces */
+  --background: #f7f7f8;
+  --card: #ffffff;
+  --card-elevated: #ffffff;
+
+  /* Text */
+  --foreground: #111827;
+  --foreground-muted: #6b7280;
+  --foreground-subtle: #9ca3af;
+
+  /* Borders */
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+
+  /* Brand */
+  --brand: #f4771f;
+  --brand-dark: #e2590e;
+  --brand-light: #fef3ea;
+  --brand-foreground: #ffffff;
+
+  /* Status */
+  --success: #16a34a;
+  --success-bg: #ecfdf5;
+  --warning: #d97706;
+  --warning-bg: #fffbeb;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --info: #2563eb;
+  --info-bg: #eff6ff;
+
+  /* Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+
+  /* Shadow */
+  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.04), 0 1px 3px 0 rgb(0 0 0 / 0.06);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-card: var(--card);
+  --color-card-elevated: var(--card-elevated);
+
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-subtle: var(--foreground-subtle);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-light: var(--brand-light);
+  --color-brand-foreground: var(--brand-foreground);
+
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+* {
+  border-color: var(--border);
+}
