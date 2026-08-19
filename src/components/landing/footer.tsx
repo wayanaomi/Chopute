@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function LandingFooter() {
   return (
     <footer className="border-t border-border bg-background">
@@ -14,33 +16,33 @@ export function LandingFooter() {
         </div>
 
         <nav className="flex items-center gap-7 text-sm text-foreground-muted">
-          <a
-            href="#pricing"
+          <Link
+            href="/pricing"
             className="transition-colors hover:text-foreground"
           >
             Pricing
-          </a>
+          </Link>
 
-          <a
-            href="#try-free"
+          <Link
+            href="/login"
             className="transition-colors hover:text-foreground"
           >
             Try free
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/privacy"
             className="transition-colors hover:text-foreground"
           >
             Privacy
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/terms"
             className="transition-colors hover:text-foreground"
           >
             Terms
-          </a>
+          </Link>
 
           <span>© 2026 Chopute</span>
         </nav>
