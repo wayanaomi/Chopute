@@ -16,6 +16,9 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test"
   },
+  "overrides": {
+  "jose": "4.15.9"
+  },
   "dependencies": {
     "@hookform/resolvers": "^5.9.0",
     "@prisma/client": "^6.19.3",
