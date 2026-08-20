@@ -8,21 +8,30 @@ export const metadata = { title: "Sign in — Chopute" };
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ mode?: string; ref?: string }>;
+  searchParams: Promise<{
+    mode?: string;
+    ref?: string;
+    redirect?: string;
+  }>;
 }) {
   const session = await getFirebaseAuth();
+  const { mode, ref, redirect: redirectTo } = await searchParams;
+
+  const safeRedirect =
+    redirectTo && redirectTo.startsWith("/")
+      ? redirectTo
+      : "/app";
 
   if (session?.user) {
-    redirect("/app");
+    redirect(safeRedirect);
   }
-
-  const { mode, ref } = await searchParams;
 
   return (
     <AuthLayout>
       <AuthCard
         initialMode={mode === "signup" ? "signup" : "login"}
         referralCode={ref}
+        redirectTo={safeRedirect}
       />
     </AuthLayout>
   );

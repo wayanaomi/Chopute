@@ -92,19 +92,26 @@ function firebaseErrorMessage(error: unknown, fallback: string) {
 export function AuthCard({
   initialMode,
   referralCode,
+  redirectTo = "/app",
 }: {
   initialMode: "login" | "signup";
   referralCode?: string | null;
+  redirectTo?: string;
 }) {
   const [mode, setMode] = useState<"login" | "signup">(initialMode);
 
   return (
     <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)] sm:p-8">
-      <GoogleSignInButton referralCode={referralCode} />
+      <GoogleSignInButton
+        referralCode={referralCode}
+        redirectTo={redirectTo}
+      />
 
       <div className="my-6 flex items-center gap-3">
         <div className="h-px flex-1 bg-border" />
-        <span className="text-xs font-medium text-foreground-subtle">or</span>
+        <span className="text-xs font-medium text-foreground-subtle">
+          or
+        </span>
         <div className="h-px flex-1 bg-border" />
       </div>
 
@@ -137,15 +144,18 @@ export function AuthCard({
       </div>
 
       {mode === "login" ? (
-        <LoginForm />
+        <LoginForm redirectTo={redirectTo} />
       ) : (
-        <SignupForm referralCode={referralCode} />
+        <SignupForm
+          referralCode={referralCode}
+          redirectTo={redirectTo}
+        />
       )}
     </div>
   );
 }
 
-function LoginForm() {
+function LoginForm({ redirectTo }: { redirectTo: string }) {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -171,7 +181,7 @@ function LoginForm() {
 
       await createChoputeSession(idToken);
 
-      router.push("/app");
+      router.push(redirectTo);
       router.refresh();
     } catch (error) {
       console.error("Firebase login error:", error);
@@ -236,8 +246,10 @@ function LoginForm() {
 
 function SignupForm({
   referralCode,
+  redirectTo,
 }: {
   referralCode?: string | null;
+  redirectTo: string;
 }) {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
@@ -268,7 +280,7 @@ function SignupForm({
 
       await createChoputeSession(idToken, referralCode);
 
-      router.push("/app");
+      router.push(redirectTo);
       router.refresh();
     } catch (error) {
       console.error("Firebase signup error:", error);

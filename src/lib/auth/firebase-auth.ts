@@ -51,7 +51,7 @@ export async function getFirebaseAuth(): Promise<ChoputeAuth> {
       }
     }
 
-    if (!user) {
+    if (!user || !user.isActive) {
       return null;
     }
 

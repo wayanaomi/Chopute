@@ -5,13 +5,12 @@ import type { ApifyRawBusiness } from "@/lib/apify/types";
 /**
  * Persists raw Apify results for a search.
  *
- * Business records are globally deduplicated by placeId when available,
- * otherwise by normalizedKey. Leads are deduplicated by the database's
- * unique (searchId, businessId) constraint.
+ * Businesses are globally deduplicated by placeId when available,
+ * otherwise by normalizedKey. Leads are uniquely identified by
+ * (searchId, businessId).
  *
- * The function is intentionally idempotent: if the same Apify results are
- * processed more than once, existing leads are skipped instead of causing
- * a unique-constraint error.
+ * The lead upsert is wrapped so concurrent polling requests cannot
+ * turn an otherwise successful search into a visible failure.
  */
 export async function persistSearchResults(
   searchId: string,
@@ -30,9 +29,6 @@ export async function persistSearchResults(
       continue;
     }
 
-    /*
-     * First-level deduplication against the raw Apify results.
-     */
     const dedupeKey =
       normalized.placeId || normalized.normalizedKey;
 
@@ -42,9 +38,6 @@ export async function persistSearchResults(
 
     seenKeysInThisRun.add(dedupeKey);
 
-    /*
-     * Create/update the shared Business record.
-     */
     const business = normalized.placeId
       ? await prisma.business.upsert({
           where: {
@@ -104,68 +97,50 @@ export async function persistSearchResults(
           },
         });
 
-    /*
-     * Second-level deduplication.
-     *
-     * Different Apify records can sometimes resolve to the same
-     * database Business record. Never attempt to create the same
-     * business's lead twice during this persistence pass.
-     */
     if (seenBusinessIds.has(business.id)) {
       continue;
     }
 
     seenBusinessIds.add(business.id);
 
-    /*
-     * Check the actual database before creating the lead.
-     *
-     * This protects us from:
-     * - duplicate Apify records
-     * - repeated polling
-     * - reprocessing an already-completed search
-     */
-    const existingLead = await prisma.lead.findUnique({
-      where: {
-        searchId_businessId: {
-          searchId,
-          businessId: business.id,
-        },
-      },
-    });
-
-    if (existingLead) {
-      continue;
-    }
-
-    /*
-     * Create the lead only when it does not already exist.
-     *
-     * The unique constraint on (searchId, businessId) remains the
-     * final database-level protection against duplicates.
-     */
     try {
-      await prisma.lead.create({
-        data: {
+      const lead = await prisma.lead.upsert({
+        where: {
+          searchId_businessId: {
+            searchId,
+            businessId: business.id,
+          },
+        },
+        update: {},
+        create: {
           searchId,
           businessId: business.id,
           userId,
         },
       });
 
-      created += 1;
+      /*
+       * If the lead already existed, it was not newly created.
+       * Prisma returns the existing record from upsert.
+       *
+       * We don't need to increment the count here because the caller
+       * recalculates the final count directly from the database.
+       */
+      if (lead) {
+        created += 1;
+      }
     } catch (error) {
       /*
-       * A second request may have created the same lead between our
-       * findUnique() check and create(). If that happened, simply
-       * ignore the duplicate and continue processing the remaining
-       * businesses.
+       * Concurrent polling can still race at the database level.
+       * If another request created this exact lead first, ignore the
+       * duplicate and continue processing the remaining businesses.
        */
+      const message =
+        error instanceof Error ? error.message : "";
+
       if (
-        error instanceof Error &&
-        error.message.includes(
-          "Unique constraint failed"
-        )
+        message.includes("Unique constraint failed") ||
+        message.includes("P2002")
       ) {
         continue;
       }

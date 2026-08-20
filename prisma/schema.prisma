@@ -37,6 +37,8 @@ model User {
   freeSearchesUsed    Int             @default(0)
   freeSearchesGranted Int             @default(2)
   plan                EntitlementPlan @default(FREE)
+  isAdmin             Boolean         @default(false)
+  isActive            Boolean         @default(true)
 
   accounts             Account[]
   sessions             Session[]

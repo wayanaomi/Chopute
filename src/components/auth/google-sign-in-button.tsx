@@ -11,8 +11,10 @@ import { Button } from "@/components/ui/button";
 
 export function GoogleSignInButton({
   referralCode,
+  redirectTo = "/app",
 }: {
   referralCode?: string | null;
+  redirectTo?: string;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -72,7 +74,12 @@ export function GoogleSignInButton({
 
       console.log("[Google Auth] Step 5: Session created successfully");
 
-      window.location.href = "/app";
+      const safeRedirect =
+        redirectTo && redirectTo.startsWith("/")
+          ? redirectTo
+          : "/app";
+
+      window.location.href = safeRedirect;
     } catch (error) {
       console.error("[Google Auth] FAILED:", error);
 
