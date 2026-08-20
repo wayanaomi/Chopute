@@ -18,6 +18,7 @@ export interface ApifyRawBusiness {
   phone?: string;
   phoneUnformatted?: string;
   website?: string;
+  emails?: string[];
   url?: string;
   categoryName?: string;
   category?: string;
@@ -34,6 +35,7 @@ export interface NormalizedBusiness {
   name: string;
   address: string | null;
   phone: string | null;
+  email: string | null;
   website: string | null;
   category: string | null;
   rating: number | null;

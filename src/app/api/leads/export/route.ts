@@ -51,6 +51,7 @@ export async function GET(request: Request) {
     leads.map((lead) => ({
       businessName: lead.business.name,
       address: lead.business.address,
+      email: lead.business.email,
       phone: lead.business.phone,
       website: lead.business.website,
       rating: lead.business.rating,

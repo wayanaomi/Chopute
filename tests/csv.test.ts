@@ -7,6 +7,7 @@ describe("buildLeadsCsv", () => {
       {
         businessName: 'Joe "The Best" Diner, Inc.',
         address: "1 Main St",
+        email: "hello@example.com",
         phone: "+15551234567",
         website: "https://example.com",
         rating: 4.2,
@@ -17,8 +18,11 @@ describe("buildLeadsCsv", () => {
       },
     ]);
 
-    expect(csv).toContain("Business,Address,Phone,Website,Rating,Review Count,Status,Search,Search Date");
+    expect(csv).toContain(
+      "Business,Address,Email,Phone,Website,Rating,Review Count,Status,Search,Search Date"
+    );
     expect(csv).toContain('"Joe ""The Best"" Diner, Inc."');
+    expect(csv).toContain("hello@example.com");
     expect(csv).toContain("New");
     expect(csv).toContain("2026-08-15");
   });

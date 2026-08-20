@@ -3,6 +3,7 @@ import { LEAD_STATUS_LABELS } from "@/lib/constants";
 export interface CsvLeadRow {
   businessName: string;
   address: string | null;
+  email: string | null;
   phone: string | null;
   website: string | null;
   rating: number | null;
@@ -15,6 +16,7 @@ export interface CsvLeadRow {
 const HEADERS = [
   "Business",
   "Address",
+  "Email",
   "Phone",
   "Website",
   "Rating",
@@ -29,11 +31,13 @@ function escapeCsvField(value: string): string {
   if (/[",\n\r]/.test(value)) {
     return `"${value.replace(/"/g, '""')}"`;
   }
+
   return value;
 }
 
 function toCell(value: string | number | null | undefined): string {
   if (value === null || value === undefined) return "";
+
   return escapeCsvField(String(value));
 }
 
@@ -46,6 +50,7 @@ export function buildLeadsCsv(rows: CsvLeadRow[]): string {
       [
         toCell(row.businessName),
         toCell(row.address),
+        toCell(row.email),
         toCell(row.phone),
         toCell(row.website),
         toCell(row.rating ?? ""),

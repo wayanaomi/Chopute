@@ -3,6 +3,7 @@ export interface LeadBusiness {
   name: string;
   address: string | null;
   phone: string | null;
+  email: string | null;
   website: string | null;
   rating: number | null;
   reviewCount: number | null;

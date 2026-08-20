@@ -27,6 +27,18 @@ export function normalizeWebsite(url: string | null | undefined): string | null 
     return null;
   }
 }
+/** Normalizes the first valid email returned by the scraper. */
+export function normalizeEmail(
+  emails: string[] | null | undefined
+): string | null {
+  if (!emails || emails.length === 0) return null;
+
+  const email = emails
+    .map((value) => value.trim().toLowerCase())
+    .find((value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value));
+
+  return email ?? null;
+}
 
 function normalizeText(value: string | null | undefined): string | null {
   if (!value) return null;
@@ -77,6 +89,7 @@ export function normalizeBusiness(raw: ApifyRawBusiness): NormalizedBusiness | n
     name,
     address,
     phone: normalizePhone(raw.phone || raw.phoneUnformatted),
+    email: normalizeEmail(raw.emails),
     website: normalizeWebsite(raw.website),
     category: normalizeText(raw.categoryName || raw.category),
     rating,
