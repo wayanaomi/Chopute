@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { Eye, EyeOff } from "lucide-react";
 import { auth } from "@/lib/firebase/config";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/form-controls";
@@ -32,6 +33,7 @@ export function AdminLoginForm() {
 
   const [email, setEmail] = useState("admin@chopute.com");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -102,6 +104,7 @@ export function AdminLoginForm() {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
         <Label htmlFor="admin-email">Email</Label>
+
         <Input
           id="admin-email"
           type="email"
@@ -114,14 +117,33 @@ export function AdminLoginForm() {
 
       <div>
         <Label htmlFor="admin-password">Password</Label>
-        <Input
-          id="admin-password"
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          required
-        />
+
+        <div className="relative">
+          <Input
+            id="admin-password"
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            className="pr-11"
+            required
+          />
+
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted transition-colors hover:text-foreground"
+            aria-label={
+              showPassword ? "Hide password" : "Show password"
+            }
+          >
+            {showPassword ? (
+              <Eye className="h-4 w-4" />
+            ) : (
+              <EyeOff className="h-4 w-4" />
+            )}
+          </button>
+        </div>
       </div>
 
       {error && (
