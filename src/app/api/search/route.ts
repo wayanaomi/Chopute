@@ -129,6 +129,8 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
+    console.error("[Search] Apify error:", error);
+    
     await prisma.search.update({
       where: { id: search.id },
       data: {
