@@ -9,8 +9,8 @@ import type { ApifyRawBusiness } from "@/lib/apify/types";
  * otherwise by normalizedKey. Leads are uniquely identified by
  * (searchId, businessId).
  *
- * The lead upsert is wrapped so concurrent polling requests cannot
- * turn an otherwise successful search into a visible failure.
+ * Duplicate records caused by repeated Apify results or concurrent
+ * polling requests are safely ignored so they cannot fail the search.
  */
 export async function persistSearchResults(
   searchId: string,
@@ -38,106 +38,114 @@ export async function persistSearchResults(
 
     seenKeysInThisRun.add(dedupeKey);
 
-    const business = normalized.placeId
-      ? await prisma.business.upsert({
+    try {
+      const business = normalized.placeId
+        ? await prisma.business.upsert({
+            where: {
+              placeId: normalized.placeId,
+            },
+            update: {
+              name: normalized.name,
+              address: normalized.address ?? undefined,
+              phone: normalized.phone ?? undefined,
+              email: normalized.email ?? undefined,
+              website: normalized.website ?? undefined,
+              category: normalized.category ?? undefined,
+              rating: normalized.rating ?? undefined,
+              reviewCount: normalized.reviewCount ?? undefined,
+              sourceUrl: normalized.sourceUrl ?? undefined,
+            },
+            create: {
+              placeId: normalized.placeId,
+              name: normalized.name,
+              address: normalized.address,
+              phone: normalized.phone,
+              email: normalized.email,
+              website: normalized.website,
+              category: normalized.category,
+              rating: normalized.rating,
+              reviewCount: normalized.reviewCount,
+              sourceUrl: normalized.sourceUrl,
+              normalizedKey: normalized.normalizedKey,
+            },
+          })
+        : await prisma.business.upsert({
+            where: {
+              normalizedKey: normalized.normalizedKey,
+            },
+            update: {
+              name: normalized.name,
+              address: normalized.address ?? undefined,
+              phone: normalized.phone ?? undefined,
+              email: normalized.email ?? undefined,
+              website: normalized.website ?? undefined,
+              category: normalized.category ?? undefined,
+              rating: normalized.rating ?? undefined,
+              reviewCount: normalized.reviewCount ?? undefined,
+              sourceUrl: normalized.sourceUrl ?? undefined,
+            },
+            create: {
+              name: normalized.name,
+              address: normalized.address,
+              phone: normalized.phone,
+              email: normalized.email,
+              website: normalized.website,
+              category: normalized.category,
+              rating: normalized.rating,
+              reviewCount: normalized.reviewCount,
+              sourceUrl: normalized.sourceUrl,
+              normalizedKey: normalized.normalizedKey,
+            },
+          });
+
+      if (seenBusinessIds.has(business.id)) {
+        continue;
+      }
+
+      seenBusinessIds.add(business.id);
+
+      try {
+        await prisma.lead.upsert({
           where: {
-            placeId: normalized.placeId,
+            searchId_businessId: {
+              searchId,
+              businessId: business.id,
+            },
           },
-          update: {
-            name: normalized.name,
-            address: normalized.address ?? undefined,
-            phone: normalized.phone ?? undefined,
-            email: normalized.email ?? undefined,
-            website: normalized.website ?? undefined,
-            category: normalized.category ?? undefined,
-            rating: normalized.rating ?? undefined,
-            reviewCount: normalized.reviewCount ?? undefined,
-            sourceUrl: normalized.sourceUrl ?? undefined,
-          },
+          update: {},
           create: {
-            placeId: normalized.placeId,
-            name: normalized.name,
-            address: normalized.address,
-            phone: normalized.phone,
-            email: normalized.email,
-            website: normalized.website,
-            category: normalized.category,
-            rating: normalized.rating,
-            reviewCount: normalized.reviewCount,
-            sourceUrl: normalized.sourceUrl,
-            normalizedKey: normalized.normalizedKey,
-          },
-        })
-      : await prisma.business.upsert({
-          where: {
-            normalizedKey: normalized.normalizedKey,
-          },
-          update: {
-            name: normalized.name,
-            address: normalized.address ?? undefined,
-            phone: normalized.phone ?? undefined,
-            email: normalized.email ?? undefined,
-            website: normalized.website ?? undefined,
-            category: normalized.category ?? undefined,
-            rating: normalized.rating ?? undefined,
-            reviewCount: normalized.reviewCount ?? undefined,
-            sourceUrl: normalized.sourceUrl ?? undefined,
-          },
-          create: {
-            name: normalized.name,
-            address: normalized.address,
-            phone: normalized.phone,
-            email: normalized.email,
-            website: normalized.website,
-            category: normalized.category,
-            rating: normalized.rating,
-            reviewCount: normalized.reviewCount,
-            sourceUrl: normalized.sourceUrl,
-            normalizedKey: normalized.normalizedKey,
+            searchId,
+            businessId: business.id,
+            userId,
           },
         });
 
-    if (seenBusinessIds.has(business.id)) {
-      continue;
-    }
-
-    seenBusinessIds.add(business.id);
-
-    try {
-      const lead = await prisma.lead.upsert({
-        where: {
-          searchId_businessId: {
-            searchId,
-            businessId: business.id,
-          },
-        },
-        update: {},
-        create: {
-          searchId,
-          businessId: business.id,
-          userId,
-        },
-      });
-
-      /*
-       * If the lead already existed, it was not newly created.
-       * Prisma returns the existing record from upsert.
-       *
-       * We don't need to increment the count here because the caller
-       * recalculates the final count directly from the database.
-       */
-      if (lead) {
         created += 1;
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "";
+
+        /*
+         * Another polling request may have created this lead first.
+         * Ignore duplicate constraint errors and continue.
+         */
+        if (
+          message.includes("Unique constraint failed") ||
+          message.includes("P2002")
+        ) {
+          continue;
+        }
+
+        throw error;
       }
     } catch (error) {
-      /*
-       * Concurrent polling can still race at the database level.
-       * If another request created this exact lead first, ignore the
-       * duplicate and continue processing the remaining businesses.
-       */
       const message =
         error instanceof Error ? error.message : "";
 
+      /*
+       * Another concurrent polling request may have created the
+       * business first. Ignore the duplicate and continue processing.
+       */
       if (
         message.includes("Unique constraint failed") ||
         message.includes("P2002")
