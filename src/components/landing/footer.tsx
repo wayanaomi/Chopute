@@ -3,7 +3,7 @@ import Link from "next/link";
 export function LandingFooter() {
   return (
     <footer className="border-t border-border bg-background">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-16 sm:px-6">
+      <div className="mx-auto flex max-w-5xl flex-col gap-8 px-4 py-16 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <div className="text-2xl font-bold tracking-tight text-foreground">
             <span>Cho</span>
@@ -15,7 +15,7 @@ export function LandingFooter() {
           </p>
         </div>
 
-        <nav className="flex items-center gap-7 text-sm text-foreground-muted">
+        <nav className="flex flex-wrap items-center gap-x-7 gap-y-3 text-sm text-foreground-muted">
           <Link
             href="/pricing"
             className="transition-colors hover:text-foreground"
