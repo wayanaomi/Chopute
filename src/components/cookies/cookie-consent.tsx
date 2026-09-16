@@ -14,9 +14,23 @@ export function CookieConsent() {
     setConsent(saved);
   }, []);
 
-  const saveConsent = (value: Consent) => {
-    window.localStorage.setItem(CONSENT_KEY, value);
+  const saveConsent = async (value: Consent) => {
     setConsent(value);
+    window.localStorage.setItem(CONSENT_KEY, value);
+
+    try {
+      await fetch("/api/cookie-consent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          choice: value === "accepted" ? "ACCEPTED" : "REJECTED",
+        }),
+      });
+    } catch (error) {
+      console.error("Failed to save cookie consent:", error);
+    }
 
     window.dispatchEvent(
       new CustomEvent("chopute-cookie-consent", {

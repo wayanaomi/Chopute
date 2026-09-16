@@ -246,7 +246,7 @@ model Payment {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  provider String @default("paystack")
+  provider  String @default("paystack")
   reference String @unique
 
   // Smallest currency unit (e.g. kobo for NGN) to avoid float rounding.
@@ -264,4 +264,23 @@ model Payment {
 
   @@index([userId])
   @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// Cookie consent
+// ---------------------------------------------------------------------------
+
+enum CookieConsentChoice {
+  ACCEPTED
+  REJECTED
+}
+
+model CookieConsent {
+  id        String              @id @default(cuid())
+  choice    CookieConsentChoice
+  version   String              @default("1.0")
+  createdAt DateTime            @default(now())
+
+  @@index([choice])
+  @@index([createdAt])
 }
