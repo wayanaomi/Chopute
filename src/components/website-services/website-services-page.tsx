@@ -25,10 +25,16 @@ export function WebsiteServicesPage() {
       {/* HEADER */}
       <header className="sticky top-0 z-50 border-b border-[#eeeeee] bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-[72px] max-w-[1180px] items-center justify-between px-5 sm:px-6">
-          <a href="https://chopute.com" className="flex items-center">
-            <span className="text-[25px] font-extrabold tracking-[-1.5px] text-[#212121]">
-              chopute
-            </span>
+          <a
+            href="https://chopute.com"
+            className="flex items-center"
+            aria-label="Chopute"
+          >
+            <img
+              src="/chopute-logo.png"
+              alt="Chopute"
+              className="h-auto w-[135px] object-contain"
+            />
           </a>
 
           <a
@@ -86,9 +92,11 @@ export function WebsiteServicesPage() {
             <div className="rounded-[28px] border border-white/10 bg-white p-4 shadow-2xl">
               <div className="overflow-hidden rounded-[20px] bg-[#F3F3F3]">
                 <div className="flex items-center justify-between border-b border-[#e5e5e5] bg-white px-5 py-4">
-                  <span className="text-sm font-extrabold tracking-[-0.4px]">
-                    Your Business
-                  </span>
+                  <img
+                    src="/chopute-logo.png"
+                    alt="Chopute"
+                    className="h-auto w-[105px] object-contain"
+                  />
 
                   <span className="rounded-full bg-[#FFF1E6] px-3 py-1 text-[11px] font-bold text-[#FF6B00]">
                     ONLINE
@@ -238,7 +246,9 @@ export function WebsiteServicesPage() {
                 </div>
 
                 <div>
-                  <h3 className="font-extrabold">Create another path to enquiries</h3>
+                  <h3 className="font-extrabold">
+                    Create another path to enquiries
+                  </h3>
                   <p className="mt-2 text-sm leading-6 text-[#697386]">
                     Turn your online presence into a place where interested
                     customers can take the next step.
@@ -348,8 +358,12 @@ export function WebsiteServicesPage() {
       {/* FOOTER */}
       <footer className="border-t border-[#eeeeee] bg-[#F3F3F3]">
         <div className="mx-auto flex max-w-[1180px] flex-col gap-3 px-5 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <div className="text-sm font-extrabold tracking-[-0.4px]">
-            chopute
+          <div>
+            <img
+              src="/chopute-logo.png"
+              alt="Chopute"
+              className="h-auto w-[110px] object-contain"
+            />
           </div>
 
           <p className="text-xs text-[#697386]">
