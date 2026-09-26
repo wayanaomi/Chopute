@@ -7,7 +7,6 @@ import {
   MessageCircle,
   ShieldCheck,
   Smartphone,
-  Sparkles,
 } from "lucide-react";
 
 const benefits = [
@@ -54,10 +53,7 @@ export function WebsiteServicesPage() {
 
         <div className="relative mx-auto grid max-w-[1180px] items-center gap-14 px-5 py-20 sm:px-6 sm:py-28 lg:grid-cols-[1.05fr_.95fr]">
           <div>
-            <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-[#FF8A00]">
-              <Sparkles size={14} />
-              Get your business online
-            </div>
+            
 
             <h1 className="max-w-[700px] text-[45px] font-extrabold leading-[1.02] tracking-[-2.5px] text-white sm:text-[58px] lg:text-[68px]">
               Get your business online without paying everything upfront.
