@@ -112,11 +112,7 @@ export function HeroSection() {
         <div className="grid min-h-[690px] items-center gap-[60px] py-[80px] lg:grid-cols-[1fr_1fr]">
           {/* LEFT */}
           <div className="max-w-[540px]">
-            {/* Badge */}
-            <div className="mb-[28px] inline-flex items-center gap-[8px] rounded-full border border-[#713817] bg-[#25170f] px-[13px] py-[6px] text-[12px] font-medium text-[#f4771f]">
-              <span className="h-[6px] w-[6px] rounded-full bg-[#f4771f]" />
-              195 countries · Instant results
-            </div>
+            
 
             {/* Heading */}
             <h1 className="text-[54px] font-bold leading-[1.03] tracking-[-2.5px] text-white sm:text-[60px] lg:text-[62px]">

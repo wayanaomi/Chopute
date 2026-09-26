@@ -1,42 +1,52 @@
+import {
+  Phone,
+  MapPin,
+  Star,
+  Globe,
+  Tags,
+  History,
+  Radio,
+} from "lucide-react";
+
 const features = [
   {
-    icon: "📞",
+    icon: Phone,
     title: "Direct phone numbers and email addresses",
     description:
       "Real contact points, not guesses or generic inboxes.",
   },
   {
-    icon: "📍",
+    icon: MapPin,
     title: "Full street address",
     description:
       "For every business returned, so you know exactly who you're reaching.",
   },
   {
-    icon: "⭐",
+    icon: Star,
     title: "Google rating on every result",
     description:
       "Instantly spot who's struggling and most likely to need what you sell.",
   },
   {
-    icon: "🌐",
+    icon: Globe,
     title: "Live website link",
     description:
       "Size up their online presence before you ever pick up the phone.",
   },
   {
-    icon: "🏷️",
+    icon: Tags,
     title: "Built-in lead tracker",
     description:
       "Tag every contact New, Contacted, Interested, Closed, or Not Interested — right inside your dashboard.",
   },
   {
-    icon: "🕐",
+    icon: History,
     title: "Automatic search history",
     description:
       "Every list you've ever pulled, saved and one click away, forever.",
   },
   {
-    icon: "📡",
+    icon: Radio,
     title: "Smart area expansion",
     description:
       "After each search, Chopute surfaces nearby areas you hadn't thought to check — multiplying your pipeline without retyping a thing.",
@@ -62,28 +72,36 @@ export function WhatYouGetSection() {
 
         {/* Feature grid */}
         <div className="mt-[65px] grid gap-[12px] md:grid-cols-2">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="flex min-h-[122px] items-start gap-[16px] rounded-[16px] border border-[#e7e9ec] bg-white px-[24px] py-[24px] shadow-[0_2px_4px_rgba(0,0,0,0.06)]"
-            >
-              {/* Icon */}
-              <div className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[12px] bg-[#fff8ed] text-[19px]">
-                {feature.icon}
-              </div>
+          {features.map((feature) => {
+            const Icon = feature.icon;
 
-              {/* Content */}
-              <div className="min-w-0">
-                <h3 className="text-[15px] font-semibold leading-[1.45] text-[#202124]">
-                  {feature.title}
-                </h3>
+            return (
+              <div
+                key={feature.title}
+                className="flex min-h-[122px] items-start gap-[16px] rounded-[16px] border border-[#e7e9ec] bg-white px-[24px] py-[24px] shadow-[0_2px_4px_rgba(0,0,0,0.06)]"
+              >
+                {/* Icon */}
+                <div className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[12px] bg-[#fff8ed] text-[#f4771f]">
+                  <Icon
+                    size={19}
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  />
+                </div>
 
-                <p className="mt-[5px] max-w-[410px] text-[14px] leading-[1.65] text-[#697386]">
-                  {feature.description}
-                </p>
+                {/* Content */}
+                <div className="min-w-0">
+                  <h3 className="text-[15px] font-semibold leading-[1.45] text-[#202124]">
+                    {feature.title}
+                  </h3>
+
+                  <p className="mt-[5px] max-w-[410px] text-[14px] leading-[1.65] text-[#697386]">
+                    {feature.description}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
