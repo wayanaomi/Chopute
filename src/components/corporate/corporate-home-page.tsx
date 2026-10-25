@@ -75,7 +75,7 @@ export function CorporateHomePage() {
               width={300}
               height={98}
               priority
-              className="h-22 w-auto object-contain"
+              className="h-16 w-auto object-contain"
             />
           </a>
 
