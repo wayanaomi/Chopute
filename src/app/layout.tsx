@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 import { CookieConsent } from "@/components/cookies/cookie-consent";
 
@@ -14,11 +15,42 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Chopute — Automatic Leads. Real Growth.",
-  description:
-    "Search for businesses by type and location, retrieve real business information, and build lead lists in seconds. 1,000 business leads, 60 seconds, $25 one-time.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const requestHeaders = await headers();
+  const host =
+    requestHeaders.get("x-forwarded-host") ??
+    requestHeaders.get("host") ??
+    "";
+  const hostname = host.split(":")[0].toLowerCase();
+
+  if (
+    hostname === "leads.chopute.com" ||
+    hostname === "www.leads.chopute.com"
+  ) {
+    return {
+      title: "Chopute Leads — Find Businesses. Build Your Pipeline.",
+      description:
+        "Find businesses by type and location, retrieve business information, and organise leads in one workspace.",
+    };
+  }
+
+  if (
+    hostname === "websites.chopute.com" ||
+    hostname === "www.websites.chopute.com"
+  ) {
+    return {
+      title: "Website Design & Development | Chopute",
+      description:
+        "Build a professional business website with Chopute. Discuss your website project with our team.",
+    };
+  }
+
+  return {
+    title: "Chopute Labs — Software, AI & Automation",
+    description:
+      "We build software, connect systems, automate repetitive work, and put AI to practical use for businesses.",
+  };
+}
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
