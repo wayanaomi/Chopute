@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { HeroSculpture } from "@/components/corporate/hero-sculpture";
 
 const services = [
   {
@@ -75,7 +76,7 @@ export function CorporateHomePage() {
               width={300}
               height={98}
               priority
-              className="h-16 w-auto object-contain"
+              className="h-30 w-auto object-contain"
             />
           </a>
 
@@ -149,55 +150,7 @@ export function CorporateHomePage() {
             </div>
 
             <div className="relative">
-              <div className="absolute -right-8 -top-8 h-40 w-40 rounded-full bg-[#fff0e5] blur-3xl" />
-              <div className="relative rounded-[2rem] border border-[#eeeeee] bg-[#fafafa] p-6 sm:p-8">
-                <div className="flex items-center justify-between border-b border-[#e9e9e9] pb-5">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#888888]">
-                      The bigger picture
-                    </p>
-                    <h2 className="mt-2 text-xl font-semibold">
-                      Technology that works together.
-                    </h2>
-                  </div>
-                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#ff6b00] text-xl text-white">
-                    ↗
-                  </span>
-                </div>
-
-                <div className="space-y-3 py-6">
-                  {[
-                    ["Software", "Tools built around your business"],
-                    ["Automation", "Less repetitive manual work"],
-                    ["Artificial intelligence", "Practical, focused applications"],
-                    ["Integration", "Systems that work together"],
-                  ].map(([title, description], index) => (
-                    <div
-                      key={title}
-                      className="flex items-center gap-4 rounded-2xl border border-[#eeeeee] bg-white p-4"
-                    >
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#fff0e5] text-sm font-bold text-[#ff6b00]">
-                        0{index + 1}
-                      </span>
-                      <div>
-                        <p className="font-semibold">{title}</p>
-                        <p className="mt-1 text-sm leading-5 text-[#777777]">
-                          {description}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="rounded-2xl bg-[#212121] p-5 text-white">
-                  <p className="text-sm text-white/65">
-                    Start with a real business problem.
-                  </p>
-                  <p className="mt-1 text-lg font-semibold">
-                    Build the right solution.
-                  </p>
-                </div>
-              </div>
+              <HeroSculpture />
             </div>
           </div>
         </section>
