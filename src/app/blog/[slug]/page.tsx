@@ -17,7 +17,10 @@ export async function generateMetadata({
   const post = blogPosts.find((item) => item.slug === slug);
 
   return post
-    ? { title: `${post.title} | Chopute Labs`, description: post.excerpt }
+    ? {
+        title: `${post.seoTitle} | Chopute Labs`,
+        description: post.excerpt,
+      }
     : { title: "Article not found | Chopute Labs" };
 }
 
@@ -40,12 +43,23 @@ export default async function BlogArticlePage({
       />
       <article className="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
         <div className="space-y-6 text-lg leading-9 text-[#4f4f4f]">
-          {post.paragraphs.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
+          {post.content.map((block, index) =>
+            block.type === "heading" ? (
+              <h2
+                key={index}
+                className="pt-5 text-2xl font-semibold leading-snug text-[#171717]"
+              >
+                {block.text}
+              </h2>
+            ) : (
+              <p key={index}>{block.text}</p>
+            ),
+          )}
         </div>
         <div className="mt-14 border-t border-[#eeeeee] pt-7">
-          <a href="/blog" className="font-semibold text-[#ff6b00]">← Back to all insights</a>
+          <a href="/blog" className="font-semibold text-[#ff6b00]">
+            ← Back to all insights
+          </a>
         </div>
       </article>
     </CorporateSiteShell>
