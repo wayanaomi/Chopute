@@ -284,3 +284,13 @@ model CookieConsent {
   @@index([choice])
   @@index([createdAt])
 }
+
+model TourWaitlist {
+  id         String   @id @default(cuid())
+  fullName   String
+  phone      String
+  email      String   @unique
+  city       String
+  occupation String
+  createdAt  DateTime @default(now())
+}

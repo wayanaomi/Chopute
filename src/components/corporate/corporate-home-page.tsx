@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { HeroSculpture } from "@/components/corporate/hero-sculpture";
+import { MobileMenu } from "@/components/corporate/mobile-menu";
 
 const services = [
   {
@@ -80,32 +81,35 @@ export function CorporateHomePage() {
             />
           </a>
 
-        <nav className="hidden items-center gap-2 md:flex">
-  <a
-    href="#services"
-    className="rounded-full border border-transparent px-5 py-3 text-sm font-semibold text-[#212121] transition duration-200 hover:border-[#ffd8bd] hover:bg-[#fff3ea] hover:text-[#ff6b00]"
-  >
-    Services
-  </a>
+        <nav aria-label="Main navigation" className="hidden items-center gap-1 lg:flex">
+            <a href="/" className="rounded-full px-4 py-3 text-sm font-semibold text-[#212121] transition hover:bg-[#fff3ea] hover:text-[#ff6b00]">
+              Home
+            </a>
+            <a href="/about" className="rounded-full px-4 py-3 text-sm font-semibold text-[#212121] transition hover:bg-[#fff3ea] hover:text-[#ff6b00]">
+              About
+            </a>
+            <a href="/services" className="rounded-full px-4 py-3 text-sm font-semibold text-[#212121] transition hover:bg-[#fff3ea] hover:text-[#ff6b00]">
+              Services
+            </a>
+            <a href="/blog" className="rounded-full px-4 py-3 text-sm font-semibold text-[#212121] transition hover:bg-[#fff3ea] hover:text-[#ff6b00]">
+              Blog
+            </a>
+            <a href="#products" className="rounded-full px-4 py-3 text-sm font-semibold text-[#212121] transition hover:bg-[#fff3ea] hover:text-[#ff6b00]">
+              Products
+            </a>
+            <a href="/tours" className="rounded-full px-4 py-3 text-sm font-semibold text-[#212121] transition hover:bg-[#fff3ea] hover:text-[#ff6b00]">
+              Tours
+            </a>
+            <a href="/contact" className="rounded-full px-4 py-3 text-sm font-semibold text-[#212121] transition hover:bg-[#fff3ea] hover:text-[#ff6b00]">
+              Contact
+            </a>
+          </nav>
 
-  <a
-    href="#about"
-    className="rounded-full border border-transparent px-5 py-3 text-sm font-semibold text-[#212121] transition duration-200 hover:border-[#ffd8bd] hover:bg-[#fff3ea] hover:text-[#ff6b00]"
-  >
-    About
-  </a>
-
-  <a
-    href="#products"
-    className="rounded-full border border-transparent px-5 py-3 text-sm font-semibold text-[#212121] transition duration-200 hover:border-[#ffd8bd] hover:bg-[#fff3ea] hover:text-[#ff6b00]"
-  >
-    Products
-  </a>
-</nav>
+          <MobileMenu />
 
           <a
             href="#contact"
-            className="inline-flex h-11 items-center justify-center rounded-full bg-[#ff6b00] px-5 text-sm font-semibold text-white transition hover:bg-[#e85f00] sm:px-6"
+            className="hidden h-11 items-center justify-center rounded-full bg-[#ff6b00] sm:inline-flex px-5 text-sm font-semibold text-white transition hover:bg-[#e85f00] sm:px-6"
           >
             Discuss a project <span className="ml-2" aria-hidden="true">↗</span>
           </a>
@@ -230,26 +234,79 @@ export function CorporateHomePage() {
         </section>
 
         <section id="products" className="border-y border-[#eeeeee] bg-[#fafafa]">
-          <div className="mx-auto flex max-w-7xl flex-col gap-8 px-5 py-20 sm:px-8 md:flex-row md:items-center md:justify-between">
-            <div className="max-w-2xl">
+          <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8 sm:py-28">
+            <div className="max-w-3xl">
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#ff6b00]">
                 Products & digital ventures
               </p>
-              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+              <h2 className="mt-5 text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">
                 More than projects. Technology with room to grow.
               </h2>
-              <p className="mt-4 leading-7 text-[#666666]">
-                We also develop digital products and focused solutions for
-                specific business and learning needs. Explore our work or talk
-                to us about an idea.
+              <p className="mt-5 text-lg leading-8 text-[#666666]">
+                Explore the digital products we are building to solve practical
+                problems for businesses and people.
               </p>
             </div>
-            <a
-              href="#contact"
-              className="inline-flex h-12 shrink-0 items-center justify-center self-start rounded-full border border-[#d8d8d8] px-6 text-sm font-semibold transition hover:border-[#ff6b00] hover:text-[#ff6b00] md:self-center"
-            >
-              Explore an idea <span className="ml-2" aria-hidden="true">↗</span>
-            </a>
+
+            <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              <article className="flex flex-col rounded-3xl border border-[#e9e9e9] bg-white p-7 transition duration-200 hover:-translate-y-1 hover:border-[#ffb780]">
+                <p className="text-sm font-semibold text-[#ff6b00]">01 / Opportunities</p>
+                <h3 className="mt-5 text-2xl font-semibold">Keren</h3>
+                <p className="mt-3 flex-1 text-sm leading-7 text-[#666666]">
+                  Discover and pursue opportunities through a focused digital platform.
+                </p>
+                <a
+                  href="https://keren.chopute.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-7 inline-flex items-center font-semibold text-[#212121] hover:text-[#ff6b00]"
+                >
+                  Explore Keren <span className="ml-2" aria-hidden="true">↗</span>
+                </a>
+              </article>
+
+              <article className="flex flex-col rounded-3xl border border-[#e9e9e9] bg-white p-7 transition duration-200 hover:-translate-y-1 hover:border-[#ffb780]">
+                <p className="text-sm font-semibold text-[#ff6b00]">02 / Lead generation</p>
+                <h3 className="mt-5 text-2xl font-semibold">Chopute Leads</h3>
+                <p className="mt-3 flex-1 text-sm leading-7 text-[#666666]">
+                  Find businesses, organise prospects and build a more structured sales pipeline.
+                </p>
+                <a
+                  href="https://leads.chopute.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-7 inline-flex items-center font-semibold text-[#212121] hover:text-[#ff6b00]"
+                >
+                  Explore Chopute Leads <span className="ml-2" aria-hidden="true">↗</span>
+                </a>
+              </article>
+
+              <article className="flex flex-col rounded-3xl border border-[#e9e9e9] bg-white p-7 transition duration-200 hover:-translate-y-1 hover:border-[#ffb780]">
+                <p className="text-sm font-semibold text-[#ff6b00]">03 / Learning</p>
+                <h3 className="mt-5 text-2xl font-semibold">Chopute Academy</h3>
+                <p className="mt-3 flex-1 text-sm leading-7 text-[#666666]">
+                  Learning and capability development for people building their future.
+                </p>
+                <p className="mt-7 text-sm text-[#777777]">
+                  Academy website address to be confirmed.
+                </p>
+              </article>
+            </div>
+
+            <div className="mt-10 rounded-3xl bg-[#fff3ea] p-7 sm:flex sm:items-center sm:justify-between sm:gap-8">
+              <div>
+                <h3 className="text-xl font-semibold">Have an idea for a digital product?</h3>
+                <p className="mt-2 text-sm leading-7 text-[#666666]">
+                  Let's discuss the problem, the users and what a practical solution could look like.
+                </p>
+              </div>
+              <a
+                href="#contact"
+                className="mt-5 inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-[#ff6b00] px-6 text-sm font-semibold text-white transition hover:bg-[#e85f00] sm:mt-0"
+              >
+                Discuss an idea <span className="ml-2" aria-hidden="true">↗</span>
+              </a>
+            </div>
           </div>
         </section>
 

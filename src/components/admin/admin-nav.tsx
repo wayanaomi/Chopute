@@ -6,6 +6,7 @@ const links = [
   { href: "/admin/searches", label: "Searches" },
   { href: "/admin/payments", label: "Payments" },
   { href: "/admin/cookies", label: "Cookie Consent" },
+  { href: "/admin/tours", label: "Campus Tour Waitlist" },
 ];
 
 export function AdminNav() {
